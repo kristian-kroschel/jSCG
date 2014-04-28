@@ -35,7 +35,7 @@ public class Run {
 				break;
 			case printUsage:
 			default:
-				
+				System.out.println("Usage: ...");
 				break;
 		}
 		
