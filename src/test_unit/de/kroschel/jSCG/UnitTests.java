@@ -7,7 +7,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	de.kroschel.jSCG.core.ScaffolderTest.class,
 	de.kroschel.jSCG.data.DataNodeTest.class,
-	de.kroschel.jSCG.template.TemplateTest.class
+	de.kroschel.jSCG.template.TemplateTest.class,
+	de.kroschel.jSCG.RunTest.class
 })
 
 public class UnitTests {
