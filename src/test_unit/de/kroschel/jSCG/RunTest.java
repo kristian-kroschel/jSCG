@@ -2,7 +2,6 @@ package de.kroschel.jSCG;
 
 import static org.junit.Assert.*;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -55,6 +54,11 @@ public class RunTest {
 	
 	private boolean compareFiles(){
 		return false;
+	}
+	
+	@Test
+	public void testGenerator(){
+		
 	}
 
 }

@@ -5,10 +5,16 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+	de.kroschel.jSCG.CommandlineArgumentsTest.class,
+	de.kroschel.jSCG.CommandlineParserTest.class,
+	de.kroschel.jSCG.RunTest.class,
 	de.kroschel.jSCG.core.ScaffolderTest.class,
 	de.kroschel.jSCG.data.DataNodeTest.class,
-	de.kroschel.jSCG.template.TemplateTest.class,
-	de.kroschel.jSCG.RunTest.class
+	de.kroschel.jSCG.output.OutputItemTest.class,
+	de.kroschel.jSCG.template.LiteralScannerTest.class,
+	de.kroschel.jSCG.template.TemplateParserTest.class,
+	de.kroschel.jSCG.template.TemplatePositionTest.class,
+	de.kroschel.jSCG.template.TemplateTest.class
 })
 
 public class UnitTests {

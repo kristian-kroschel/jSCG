@@ -101,7 +101,7 @@ public class Scaffolder {
 		
 		createSuccessLogMessage().setReason("RunScriptSuccess");
 		
-		this.output = new OutputItem();
+		this.output = new OutputItem("out.o"); // TODO
     	this.output.setText(resultWriter.toString());
 	}
 

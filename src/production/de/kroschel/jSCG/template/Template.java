@@ -11,6 +11,10 @@ import java.util.Iterator;
 import de.kroschel.jSCG.data.DataItem;
 
 /**
+ * this class represents the executable template:
+ * it consists of both text and script fragments which will form together with the data-item an output-item
+ * with the addFragment method either a plain text  or an already executable JS statement may be added.
+ * with the prepareScript method a new DataItem is    
  * @author kristian
  *
  */
@@ -24,6 +28,11 @@ public class Template {
 	private String preparedScript;
 	private String outputName;
 
+	/**
+	 * depending on the fragment type, the fragment is surrounded by an executionable 
+	 * @param aFragmentType 
+	 * @param aFragment
+	 */
 	public void addTemplateFragment(TemplateFragmentType aFragmentType, String aFragment) {
 		if(this.fragments == null){
 			this.fragments = new ArrayList<String>();
@@ -65,6 +74,7 @@ public class Template {
 		return this.fragments != null && !this.fragments.isEmpty();
 	}
 
+	
 	public void prepareScript(DataItem currentDataItem) {
 		if (!isFilled()){
 			throw new TemplateNotReadyException();
