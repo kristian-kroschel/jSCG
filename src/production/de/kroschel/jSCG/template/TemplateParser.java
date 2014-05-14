@@ -28,7 +28,8 @@ public class TemplateParser {
 	private StringBuilder templateinput;
 	private ArrayList<LiteralPosition> literalpositions;
 	private ArrayList<TemplateFragment> fragments;
-	private TemplateFragment currentFragment;
+	// not used:
+	//private TemplateFragment currentFragment;
 	
 	
 	public TemplateParser() {
@@ -57,44 +58,19 @@ public class TemplateParser {
 	}
 
 	public void parseTemplate() {
-		this.template = new Template();
-		this.templateinput = new StringBuilder();
+		
 		
 		try {
-			initCurrentPosition();
-			LiteralScanner scanner = new LiteralScanner();
-			int currentChar;
-			while ( (currentChar = templateReader.read()) != -1){
-				this.currentCharacter = (char)currentChar;
-				determineParsePosition();
-				scanner.scan(this.currentCharacter);
-				this.templateinput.append(this.currentCharacter);
-				System.out.print(this.currentParsePosition.toString() + " " + (char)currentChar);
-			}
+			initialiseParser();
 			
+			LiteralScanner scanner = scanInput();
 			this.literalpositions = scanner.getLiteralPositions();
+			
 			TokenBuilder tb = new TokenBuilder(this.templateinput.toString(), this.literalpositions);
-			this.fragments = tb.buildFragments(TemplatePosition.createInitialPosition(), this.currentParsePosition);
-			
-			
-			
-			
-			
-			for(TemplateFragment aFragment : this.fragments){
-				TemplateFragmentType aFragmentType = null;
-				
-				if (aFragment instanceof ScriptTemplateFragment){
-					aFragmentType = TemplateFragmentType.SCRIPT;
-				}
-				if (aFragment instanceof TextTemplateFragment){
-					aFragmentType = TemplateFragmentType.TEXT;
-				}
-				if (aFragmentType != null){
-					this.template.addTemplateFragment(aFragmentType, aFragment.getContent());
-				}
-			}
-			
-			this.template.prepareScript(null);
+			//this.fragments = tb.buildFragments(TemplatePosition.createInitialPosition(), this.currentParsePosition);
+			this.fragments = tb.buildFragments(TemplatePosition.createInitialPosition(),scanner.getLastTemplatePosition());
+						
+			buildTemplate();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -113,14 +89,48 @@ public class TemplateParser {
 		
 	}
 
+	private void buildTemplate() {
+		for(TemplateFragment aFragment : this.fragments){
+			TemplateFragmentType aFragmentType = null;
+			
+			if (aFragment instanceof ScriptTemplateFragment){
+				aFragmentType = TemplateFragmentType.SCRIPT;
+			}
+			if (aFragment instanceof TextTemplateFragment){
+				aFragmentType = TemplateFragmentType.TEXT;
+			}
+			if (aFragmentType != null){
+				this.template.addTemplateFragment(aFragmentType, aFragment.getContent());
+			}
+		}
+		
+		this.template.prepareScript(null);
+	}
+
+	private LiteralScanner scanInput() throws IOException {
+		LiteralScanner scanner = new LiteralScanner();
+		int currentChar;
+		while ( (currentChar = templateReader.read()) != -1){
+			this.currentCharacter = (char)currentChar;
+			determineParsePosition();
+			scanner.scan(this.currentCharacter);
+			this.templateinput.append(this.currentCharacter);
+			// TODO: Logging?
+			//System.out.print(this.currentParsePosition.toString() + " " + (char)currentChar);
+		}
+		return scanner;
+	}
+
 	
 
-	private void initCurrentPosition() {
-		currentParsePosition = TemplatePosition.createInitialPosition();
+	private void initialiseParser() {
+		this.template = new Template();
+		this.templateinput = new StringBuilder();
+		this.currentParsePosition = TemplatePosition.createInitialPosition();
 	}
 	
 	
-
+    // TODO: this logic is doubled- see literal scanner
 	private void determineParsePosition() {
 		this.currentParsePosition.incScanPosition();
 		this.currentParsePosition.incColumn();
@@ -131,6 +141,7 @@ public class TemplateParser {
 		
 	}
 	
+	// doubled in scanner:
 	private boolean isCurrentCharacterLineSeparator(){
 		boolean res = (this.lineseparator == this.currentCharacter);
 		return res;

@@ -12,6 +12,7 @@ public class LiteralScannerTest {
 	
 	String input;
 	ArrayList<LiteralPosition> result;
+	TemplatePosition endPosition;
 	
 	public void setup(){
 		LiteralScanner s = new LiteralScanner();
@@ -20,6 +21,7 @@ public class LiteralScannerTest {
 			s.scan(input.charAt(i));
 		}
 		result = s.getLiteralPositions();
+		endPosition = s.getLastTemplatePosition();
 	}
 	
 	@After
@@ -123,4 +125,12 @@ public class LiteralScannerTest {
 		assertEquals("Column - Literal 4",9,result.get(3).getPosition().getColumn());
 	}
 
+	@Test
+	public void testGetLastEndposition(){
+		input = "text";
+		setup();
+		assertEquals(1,endPosition.getLine());
+		assertEquals(4,endPosition.getColumn());
+		assertEquals(3, endPosition.getScanPosition());
+	}
 }

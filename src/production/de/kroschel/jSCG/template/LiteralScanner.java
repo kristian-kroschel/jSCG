@@ -11,11 +11,12 @@ public class LiteralScanner {
 	Literal literalfound;
 	boolean escapeWasRead = false;
 	boolean bufferInput = false;
-	TemplatePosition literalPosition;
+	TemplatePosition literalPosition = TemplatePosition.createInitialPosition();
+	TemplatePosition lastScannedTemplatePosition = TemplatePosition.createInitialPosition();
 	int linecount = 1, column = 1, scanPosition = 0;
 	
 	public void scan(char currentChar) {
-		
+		lastScannedTemplatePosition = calulateNewTemplatePosition();
 		
 		if (isEscapeLiteral(currentChar)){
 			// ignore the following char:
@@ -23,7 +24,7 @@ public class LiteralScanner {
 		} else {
 			if (literalStarts(currentChar) && !escapeWasRead){
 				bufferInput = true;
-				literalPosition = TemplatePosition.createTemplatePosition(linecount, column, scanPosition);
+				literalPosition = calulateNewTemplatePosition();
 			}
 			if (bufferInput) {
 				buffer.append(currentChar);
@@ -46,6 +47,10 @@ public class LiteralScanner {
 			column = 1;
 		}
 		scanPosition++;
+	}
+
+	private TemplatePosition calulateNewTemplatePosition() {
+		return TemplatePosition.createTemplatePosition(linecount, column, scanPosition);
 	}
 
 	private boolean isNewlineLiteral(char currentChar) {
@@ -108,6 +113,10 @@ public class LiteralScanner {
 
 	public ArrayList<LiteralPosition> getLiteralPositions() {
 		return resultPositions;
+	}
+
+	public TemplatePosition getLastTemplatePosition() {
+		return this.lastScannedTemplatePosition;
 	}
 
 }
