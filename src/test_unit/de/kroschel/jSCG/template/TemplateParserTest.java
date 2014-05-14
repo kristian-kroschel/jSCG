@@ -34,17 +34,23 @@ public class TemplateParserTest {
 		String input = "line1\nline2";
 		tr.setInputReader(new StringReader(input));
 		tr.parseTemplate();
+		
 		Template t = tr.getTemplate();
-		t.prepareScript(null);
 		String result = t.getScript();
 		assertEquals("print('line1\nline2');",result);
 	}
 	
+	
 	@Test
-	public void testScanTextInput(){
+	public void testTextWithComments(){
 		TemplateParser tr = new TemplateParser();
-		String input = "line1\nline2";
+		String input = "$' comment\nline2\ntext line3";
 		tr.setInputReader(new StringReader(input));
+		tr.parseTemplate();
+		
+		Template t = tr.getTemplate();
+		String result = t.getScript();
+		assertEquals("print('line2\ntext line3');",result);
 	}
 
 }

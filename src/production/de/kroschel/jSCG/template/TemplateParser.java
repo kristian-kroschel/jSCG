@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 
 import de.kroschel.jSCG.data.DataItem;
+import de.kroschel.jSCG.template.Template.TemplateFragmentType;
 
 public class TemplateParser {
 	
@@ -19,12 +20,16 @@ public class TemplateParser {
 	private Template template;
 	
 	private TemplatePosition currentParsePosition;
-	private String currentCharacter;
-		
-	private String lineseparator;
+	
+	private char currentCharacter;	
+	private char lineseparator;
 
-	// temp. result
+	// temp. result:
+	private StringBuilder templateinput;
+	private ArrayList<LiteralPosition> literalpositions;
 	private ArrayList<TemplateFragment> fragments;
+	private TemplateFragment currentFragment;
+	
 	
 	public TemplateParser() {
 		initLineSeparator();
@@ -45,32 +50,51 @@ public class TemplateParser {
 		}
 	}
 
-	
-
 	private void initLineSeparator() {
 		String lineSep = System.lineSeparator();
 		int lineSepLength = lineSep.length();
-		this.lineseparator = lineSep.substring(lineSepLength-1);
+		this.lineseparator = lineSep.charAt(lineSepLength-1);
 	}
 
 	public void parseTemplate() {
 		this.template = new Template();
+		this.templateinput = new StringBuilder();
 		
 		try {
-			
 			initCurrentPosition();
-			
-			char[] currentChar = new char[1];
-			while ( templateReader.read(currentChar,0,1) != -1){
-				this.currentCharacter = new String(Character.toString(currentChar[0]));
-				System.out.print(currentChar);
+			LiteralScanner scanner = new LiteralScanner();
+			int currentChar;
+			while ( (currentChar = templateReader.read()) != -1){
+				this.currentCharacter = (char)currentChar;
 				determineParsePosition();
-				//System.out.print(":");
-				//System.out.print(new Character((char) charRead[0]));
-				System.out.print(this.currentParsePosition.toString() + " ");
+				scanner.scan(this.currentCharacter);
+				this.templateinput.append(this.currentCharacter);
+				System.out.print(this.currentParsePosition.toString() + " " + (char)currentChar);
 			}
 			
-			System.out.println("---");
+			this.literalpositions = scanner.getLiteralPositions();
+			TokenBuilder tb = new TokenBuilder(this.templateinput.toString(), this.literalpositions);
+			this.fragments = tb.buildFragments(TemplatePosition.createInitialPosition(), this.currentParsePosition);
+			
+			
+			
+			
+			
+			for(TemplateFragment aFragment : this.fragments){
+				TemplateFragmentType aFragmentType = null;
+				
+				if (aFragment instanceof ScriptTemplateFragment){
+					aFragmentType = TemplateFragmentType.SCRIPT;
+				}
+				if (aFragment instanceof TextTemplateFragment){
+					aFragmentType = TemplateFragmentType.TEXT;
+				}
+				if (aFragmentType != null){
+					this.template.addTemplateFragment(aFragmentType, aFragment.getContent());
+				}
+			}
+			
+			this.template.prepareScript(null);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -89,12 +113,13 @@ public class TemplateParser {
 		
 	}
 
+	
+
 	private void initCurrentPosition() {
-		currentParsePosition = new TemplatePosition();
-		currentParsePosition.setColumn(0);
-		currentParsePosition.setLine(1);
-		currentParsePosition.setScanPosition(0);
+		currentParsePosition = TemplatePosition.createInitialPosition();
 	}
+	
+	
 
 	private void determineParsePosition() {
 		this.currentParsePosition.incScanPosition();
@@ -107,7 +132,7 @@ public class TemplateParser {
 	}
 	
 	private boolean isCurrentCharacterLineSeparator(){
-		boolean res = this.lineseparator.equals(this.currentCharacter);
+		boolean res = (this.lineseparator == this.currentCharacter);
 		return res;
 	}
 

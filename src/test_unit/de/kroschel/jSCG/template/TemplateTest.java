@@ -47,7 +47,7 @@ public class TemplateTest {
 	public void testIsNotEmpty() {
 		Template t = new Template();
 		t.addTemplateFragment(TemplateFragmentType.TEXT, "some Text\nbla");
-		assertTrue(t.isFilled());
+		assertTrue(t.isFragmentListPresent());
 	}
 
 }

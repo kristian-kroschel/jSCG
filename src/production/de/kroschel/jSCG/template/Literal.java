@@ -6,13 +6,13 @@ public enum Literal {
 	endBlockComment("\"$"),
 	beginLineComment("$'"),
 	endLineComment("\n"),
-	beginScriptTag("$>"),
-	endScriptTag("<$"),
+	beginScript("$>"),
+	endScript("<$"),
 	newLine("\n"),
 	singleQuote("'"),
 	escapeCharacter("\\"),
-	beginInstructionTag("$!"),
-	endInstructionTag("!$");
+	beginInstruction("$!"),
+	endInstruction("!$");
 	
 	String characterSequence;
 	

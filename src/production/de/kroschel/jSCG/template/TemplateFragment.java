@@ -8,21 +8,21 @@ package de.kroschel.jSCG.template;
  */
 public abstract class TemplateFragment {
 	
-	private TemplatePosition begin;
-	private TemplatePosition end;
+	private LiteralPosition begin;
+	private LiteralPosition end;
 	
 	private StringBuilder content = new StringBuilder();
 	
-	public TemplatePosition getBegin() {
+	public LiteralPosition getBegin() {
 		return begin;
 	}
-	public void setBegin(TemplatePosition begin) {
+	public void setBegin(LiteralPosition begin) {
 		this.begin = begin;
 	}
-	public TemplatePosition getEnd() {
+	public LiteralPosition getEnd() {
 		return end;
 	}
-	public void setEnd(TemplatePosition end) {
+	public void setEnd(LiteralPosition end) {
 		this.end = end;
 	}
 	
@@ -35,6 +35,15 @@ public abstract class TemplateFragment {
 	public void addCharacter(String currentCharacter) {
 		this.content.append(currentCharacter);
 	}
+	
+	public String getContent() {
+		return this.content.toString();
+	}
+	
+	public void addContent(String aContent){
+		this.content.append(aContent);
+	}
+	
 		
 	
 

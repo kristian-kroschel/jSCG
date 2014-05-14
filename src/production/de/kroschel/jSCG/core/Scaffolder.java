@@ -135,7 +135,7 @@ public class Scaffolder {
 			conductCheckFailed((this.currentTemplate == null),"Template Not Set")
 		) return false;
 		if (
-			conductCheckFailed((!this.currentTemplate.isFilled()),"Template Not Filled")
+			conductCheckFailed((!this.currentTemplate.isFragmentListPresent()),"Template Not Filled")
 		) return false;
 		return true;
 		

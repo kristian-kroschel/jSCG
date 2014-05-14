@@ -12,7 +12,7 @@ public class LiteralScanner {
 	boolean escapeWasRead = false;
 	boolean bufferInput = false;
 	TemplatePosition literalPosition;
-	int linecount = 1, column = 0, scanPosition = 0;
+	int linecount = 1, column = 1, scanPosition = 0;
 	
 	public void scan(char currentChar) {
 		
@@ -23,10 +23,7 @@ public class LiteralScanner {
 		} else {
 			if (literalStarts(currentChar) && !escapeWasRead){
 				bufferInput = true;
-				literalPosition = new TemplatePosition();
-				literalPosition.setLine(linecount);
-				literalPosition.setColumn(column);
-				literalPosition.setScanPosition(scanPosition);
+				literalPosition = TemplatePosition.createTemplatePosition(linecount, column, scanPosition);
 			}
 			if (bufferInput) {
 				buffer.append(currentChar);
@@ -46,7 +43,7 @@ public class LiteralScanner {
 		column++;
 		if (isNewlineLiteral(currentChar)){
 			linecount++;
-			column = 0;
+			column = 1;
 		}
 		scanPosition++;
 	}
@@ -75,11 +72,11 @@ public class LiteralScanner {
 		if (bufferContent.equals(Literal.endLineComment.characterSequence)){
 			literalfound = Literal.endLineComment;
 		}
-		if (bufferContent.equals(Literal.beginScriptTag.characterSequence)){
-			literalfound = Literal.beginScriptTag;
+		if (bufferContent.equals(Literal.beginScript.characterSequence)){
+			literalfound = Literal.beginScript;
 		}
-		if (bufferContent.equals(Literal.endScriptTag.characterSequence)){
-			literalfound = Literal.endScriptTag;
+		if (bufferContent.equals(Literal.endScript.characterSequence)){
+			literalfound = Literal.endScript;
 		}
 		return literalfound != null;
 	}
@@ -90,7 +87,7 @@ public class LiteralScanner {
 		// usually we are looking for beginning tags:
 		result =
 				(Literal.beginLineComment.characterSequence.charAt(0) == currentChar) ||
-				(Literal.beginScriptTag.characterSequence.charAt(0) == currentChar)
+				(Literal.beginScript.characterSequence.charAt(0) == currentChar)
 		;
 		
 		// in case the last literal was already the beginning of a line comment or a script we search for their end tags:
@@ -99,8 +96,8 @@ public class LiteralScanner {
 				case beginLineComment:
 					result = (Literal.endLineComment.characterSequence.charAt(0) == currentChar);
 					break;
-				case beginScriptTag:
-					result = (Literal.endScriptTag.characterSequence.charAt(0) == currentChar);
+				case beginScript:
+					result = (Literal.endScript.characterSequence.charAt(0) == currentChar);
 					break;
 				default:
 					// search for begin tags (see above)

@@ -36,7 +36,7 @@ public class LiteralScannerTest {
 		assertTrue(result.size() >= 1);
 		LiteralPosition lp = result.get(0);
 		assertTrue(lp.getPosition().getLine()==1);
-		assertTrue(lp.getPosition().getColumn()==0);
+		assertTrue(lp.getPosition().getColumn()==1);
 		assertTrue(lp.getPosition().getScanPosition()==0);
 		assertTrue(lp.getLiteral() == Literal.beginLineComment);
 		
@@ -44,15 +44,16 @@ public class LiteralScannerTest {
 	
 	@Test
 	public void testEndLineComment() {
+		//       0123456789 01234
 		input = "$'comment\ntext";
 		setup();
 		
-		assertTrue(result.size() >= 2);
+		assertEquals(2,result.size());
 		LiteralPosition lp = result.get(1);
-		assertTrue(lp.getPosition().getLine()==1);
-		assertTrue(lp.getPosition().getColumn()==9);
-		assertTrue(lp.getPosition().getScanPosition()==9);
-		assertTrue(lp.getLiteral() == Literal.endLineComment);
+		assertEquals(1,lp.getPosition().getLine());
+		assertEquals(10,lp.getPosition().getColumn());
+		assertEquals(9,lp.getPosition().getScanPosition());
+		assertEquals(Literal.endLineComment,lp.getLiteral());
 		
 	}
 	
@@ -63,14 +64,14 @@ public class LiteralScannerTest {
 		input = "$>a script\n<$";
 		setup();
 		
-		assertTrue(result.size() == 2);
+		assertEquals(2,result.size());
 		LiteralPosition lp0 = result.get(0);
 		LiteralPosition lp1 = result.get(1);
-		assertTrue(lp0.getLiteral() == Literal.beginScriptTag);
+		assertEquals(Literal.beginScript,lp0.getLiteral());
 
-		assertTrue(lp1.getLiteral() == Literal.endScriptTag);
-		assertTrue(lp1.getPosition().getLine()==2);
-		assertTrue(lp1.getPosition().getColumn()==0);
+		assertEquals(Literal.endScript,lp1.getLiteral());
+		assertEquals("Line-endScriptTag",2,lp1.getPosition().getLine());
+		assertEquals("column-endScriptTag",1,lp1.getPosition().getColumn());
 		assertEquals("Scanposition-endScriptTag",11,lp1.getPosition().getScanPosition());
 	}
 	
@@ -84,8 +85,42 @@ public class LiteralScannerTest {
 		
 		assertEquals("size literals",2,result.size());
 		LiteralPosition lp0 = result.get(0);
-		assertEquals("Literal",Literal.beginScriptTag, lp0.getLiteral());
+		assertEquals("Literal",Literal.beginScript, lp0.getLiteral());
 		assertEquals("Scanposition-beginScriptTag",18,lp0.getPosition().getScanPosition());
+	}
+	
+	@Test
+	public void testCommentAndScript(){
+		//   0000000001111111111
+		//   1234567890123456789
+		// 1 $' a comment
+		// 2 $>script<$
+		// 3 text
+        //                 111 11111112
+        //       0123456789012 34567890
+		input = "$' a comment\n$>script<$\ntext";
+		setup();
+		
+		assertEquals("size literals",4,result.size());
+		assertEquals("Literal 1",Literal.beginLineComment, result.get(0).getLiteral());
+		assertEquals("Literal 2",Literal.endLineComment, result.get(1).getLiteral());
+		assertEquals("Literal 3",Literal.beginScript, result.get(2).getLiteral());
+		assertEquals("Literal 4",Literal.endScript, result.get(3).getLiteral());
+		
+		assertEquals("Scanposition - Literal 1",0,result.get(0).getPosition().getScanPosition());
+		assertEquals("Scanposition - Literal 2",12,result.get(1).getPosition().getScanPosition());
+		assertEquals("Scanposition - Literal 3",13,result.get(2).getPosition().getScanPosition());
+		assertEquals("Scanposition - Literal 4",21,result.get(3).getPosition().getScanPosition());
+		
+		assertEquals("Line - Literal 1",1,result.get(0).getPosition().getLine());
+		assertEquals("Line - Literal 2",1,result.get(1).getPosition().getLine());
+		assertEquals("Line - Literal 3",2,result.get(2).getPosition().getLine());
+		assertEquals("Line - Literal 4",2,result.get(3).getPosition().getLine());
+		
+		assertEquals("Column - Literal 1",1,result.get(0).getPosition().getColumn());
+		assertEquals("Column - Literal 2",13,result.get(1).getPosition().getColumn());
+		assertEquals("Column - Literal 3",1,result.get(2).getPosition().getColumn());
+		assertEquals("Column - Literal 4",9,result.get(3).getPosition().getColumn());
 	}
 
 }

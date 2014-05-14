@@ -14,7 +14,8 @@ import de.kroschel.jSCG.data.DataItem;
  * this class represents the executable template:
  * it consists of both text and script fragments which will form together with the data-item an output-item
  * with the addFragment method either a plain text  or an already executable JS statement may be added.
- * with the prepareScript method a new DataItem is    
+ * with the prepareScript method these fragments are composed together to form the script.
+ *  
  * @author kristian
  *
  */
@@ -70,25 +71,26 @@ public class Template {
 		this.outputName = string;
 	}
 
-	public boolean isFilled() {
+	public boolean isFragmentListPresent() {
 		return this.fragments != null && !this.fragments.isEmpty();
 	}
 
 	
-	public void prepareScript(DataItem currentDataItem) {
-		if (!isFilled()){
-			throw new TemplateNotReadyException();
+	public String prepareScript(DataItem currentDataItem) {
+		if (!isFragmentListPresent()){
+			throw new TemplateNotReadyException("No Fragments");
 		}
 		StringBuffer result = new StringBuffer();
 		for (String aFragment : this.fragments){
 			result.append(aFragment);
 		}
 		preparedScript = result.toString();
+		return preparedScript;
 	}
 
 	public String getScript() {
 		if (preparedScript == null){
-			throw new TemplateNotReadyException();
+			throw new TemplateNotReadyException("No Script");
 		}
 		return preparedScript;
 	}
