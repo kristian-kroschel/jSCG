@@ -13,6 +13,7 @@ import org.junit.runners.Suite;
 	de.kroschel.jSCG.output.OutputItemTest.class,
 	de.kroschel.jSCG.template.LiteralScannerTest.class,
 	de.kroschel.jSCG.template.LiteralPositionTest.class,
+	de.kroschel.jSCG.template.InstructionParserTest.class,
 	de.kroschel.jSCG.template.TemplateParserTest.class,
 	de.kroschel.jSCG.template.TemplatePositionTest.class,
 	de.kroschel.jSCG.template.TemplateTest.class,

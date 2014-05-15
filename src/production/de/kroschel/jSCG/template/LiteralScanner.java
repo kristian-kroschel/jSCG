@@ -71,28 +71,29 @@ public class LiteralScanner {
 
 	private boolean literalFound() {
 		String bufferContent = buffer.toString();
-		if (bufferContent.equals(Literal.beginLineComment.characterSequence)){
-			literalfound = Literal.beginLineComment;
-		}
-		if (bufferContent.equals(Literal.endLineComment.characterSequence)){
-			literalfound = Literal.endLineComment;
-		}
-		if (bufferContent.equals(Literal.beginScript.characterSequence)){
-			literalfound = Literal.beginScript;
-		}
-		if (bufferContent.equals(Literal.endScript.characterSequence)){
-			literalfound = Literal.endScript;
-		}
+		checkForLiteral(bufferContent,Literal.beginLineComment);
+		checkForLiteral(bufferContent,Literal.endLineComment);
+		checkForLiteral(bufferContent,Literal.beginScript);
+		checkForLiteral(bufferContent,Literal.endScript);
+		checkForLiteral(bufferContent,Literal.beginInstruction);
+		checkForLiteral(bufferContent,Literal.endInstruction);
 		return literalfound != null;
 	}
-
+	
+	private void checkForLiteral(String bufferContent, Literal aLiteral){
+		if (bufferContent.equals(aLiteral.characterSequence)){
+			literalfound = aLiteral;
+		}
+	}
+	
 	private boolean literalStarts(char currentChar) {
 		boolean result = false;
 		
 		// usually we are looking for beginning tags:
 		result =
 				(Literal.beginLineComment.characterSequence.charAt(0) == currentChar) ||
-				(Literal.beginScript.characterSequence.charAt(0) == currentChar)
+				(Literal.beginScript.characterSequence.charAt(0) == currentChar) ||
+				(Literal.beginInstruction.characterSequence.charAt(0) == currentChar)
 		;
 		
 		// in case the last literal was already the beginning of a line comment or a script we search for their end tags:
@@ -104,6 +105,8 @@ public class LiteralScanner {
 				case beginScript:
 					result = (Literal.endScript.characterSequence.charAt(0) == currentChar);
 					break;
+				case beginInstruction:
+					result = (Literal.endInstruction.characterSequence.charAt(0) == currentChar);
 				default:
 					// search for begin tags (see above)
 			}	

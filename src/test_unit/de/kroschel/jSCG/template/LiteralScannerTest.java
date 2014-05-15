@@ -133,4 +133,24 @@ public class LiteralScannerTest {
 		assertEquals(4,endPosition.getColumn());
 		assertEquals(3, endPosition.getScanPosition());
 	}
+	
+	@Test
+	public void testDataInstructions(){
+		/* $! data(root,node);
+		      data(root,child,son);
+		      data(root,attribute,r1,r1value);
+		      data(son,node);
+		   !$
+		*/
+		//       00000000000111111111 2222222222333333333344444 444445555555555666666666677777777778 8888888889999999999 00
+		//       01234567890123456789 0123456789012345678901234 567890123456789012345678901234567890 1234567890123456789 01
+		input = "$! data(root,node);\n   data(root,child,son);\n   data(root,attribute,r1,r1value);\n   data(son,node);\n!$";
+		setup();
+		
+		assertEquals("size literals",2,result.size());
+		assertEquals("Literal 1",Literal.beginInstruction, result.get(0).getLiteral());
+		assertEquals("Literal 2",Literal.endInstruction, result.get(1).getLiteral());
+		assertEquals("Scanposition - Literal 1",0,result.get(0).getPosition().getScanPosition());
+		assertEquals("Scanposition - Literal 2",100,result.get(1).getPosition().getScanPosition());
+	}
 }
